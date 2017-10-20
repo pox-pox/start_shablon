@@ -1,10 +1,10 @@
 var gulp           = require('gulp'),
 		gutil          = require('gulp-util' ),
 		sass           = require('gulp-sass'),
-		browserSync    = require('browser-sync'),		//Автоматическое обновление страниц
-		concat         = require('gulp-concat'),		// Подключаем gulp-concat (для конкатенации файлов)
-		uglify         = require('gulp-uglify'),		// Подключаем gulp-uglifyjs (для сжатия JS)
-		cleanCSS       = require('gulp-clean-css'),		//Минификация css
+		browserSync    = require('browser-sync'),		//РђРІС‚РѕРјР°С‚РёС‡РµСЃРєРѕРµ РѕР±РЅРѕРІР»РµРЅРёРµ СЃС‚СЂР°РЅРёС†
+		concat         = require('gulp-concat'),		// РџРѕРґРєР»СЋС‡Р°РµРј gulp-concat (РґР»СЏ РєРѕРЅРєР°С‚РµРЅР°С†РёРё С„Р°Р№Р»РѕРІ)
+		uglify         = require('gulp-uglify'),		// РџРѕРґРєР»СЋС‡Р°РµРј gulp-uglifyjs (РґР»СЏ СЃР¶Р°С‚РёСЏ JS)
+		cleanCSS       = require('gulp-clean-css'),		//РњРёРЅРёС„РёРєР°С†РёСЏ css
 		rename         = require('gulp-rename'),
 		del            = require('del'),
 		imagemin       = require('gulp-imagemin'),
@@ -14,24 +14,24 @@ var gulp           = require('gulp'),
 		notify         = require("gulp-notify"),
 		rsync          = require('gulp-rsync');
 
-// Пользовательские скрипты проекта
+// РџРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРёРµ СЃРєСЂРёРїС‚С‹ РїСЂРѕРµРєС‚Р°
 
 gulp.task('common-js', function() {
 	return gulp.src([
 		'app/js/common.js',
 		])
-	.pipe(concat('common.min.js'))// Собираем их в кучу в новом файле common.min.js
-	.pipe(uglify())// Сжимаем JS файл
+	.pipe(concat('common.min.js'))// РЎРѕР±РёСЂР°РµРј РёС… РІ РєСѓС‡Сѓ РІ РЅРѕРІРѕРј С„Р°Р№Р»Рµ common.min.js
+	.pipe(uglify())// РЎР¶РёРјР°РµРј JS С„Р°Р№Р»
 	.pipe(gulp.dest('app/js'));
 });
 
 gulp.task('js', ['common-js'], function() {
 	return gulp.src([
 		'app/libs/jquery/dist/jquery.min.js',
-		'app/js/common.min.js', // Всегда в конце
+		'app/js/common.min.js', // Р’СЃРµРіРґР° РІ РєРѕРЅС†Рµ
 		])
 	.pipe(concat('scripts.min.js'))
-	// .pipe(uglify()) // Минимизировать весь js (на выбор)
+	// .pipe(uglify()) // РњРёРЅРёРјРёР·РёСЂРѕРІР°С‚СЊ РІРµСЃСЊ js (РЅР° РІС‹Р±РѕСЂ)
 	.pipe(gulp.dest('app/js'))
 	.pipe(browserSync.reload({stream: true}));
 });
@@ -48,20 +48,20 @@ gulp.task('browser-sync', function() {
 });
 
 gulp.task('sass', function() {
-	return gulp.src('app/sass/**/*.sass')	// Берем источник
-	.pipe(sass({outputStyle: 'expand'}).on("error", notify.onError()))	// Преобразуем Sass в CSS посредством gulp-sass
+	return gulp.src('app/sass/**/*.sass')	// Р‘РµСЂРµРј РёСЃС‚РѕС‡РЅРёРє
+	.pipe(sass({outputStyle: 'expand'}).on("error", notify.onError()))	// РџСЂРµРѕР±СЂР°Р·СѓРµРј Sass РІ CSS РїРѕСЃСЂРµРґСЃС‚РІРѕРј gulp-sass
 	.pipe(rename({suffix: '.min', prefix : ''}))
 	.pipe(autoprefixer(['last 15 versions']))
-	.pipe(cleanCSS()) // Опционально, закомментировать при отладке
-	.pipe(gulp.dest('app/css'))	// Выгружаем результата в папку app/css
+	.pipe(cleanCSS()) // РћРїС†РёРѕРЅР°Р»СЊРЅРѕ, Р·Р°РєРѕРјРјРµРЅС‚РёСЂРѕРІР°С‚СЊ РїСЂРё РѕС‚Р»Р°РґРєРµ
+	.pipe(gulp.dest('app/css'))	// Р’С‹РіСЂСѓР¶Р°РµРј СЂРµР·СѓР»СЊС‚Р°С‚Р° РІ РїР°РїРєСѓ app/css
 	.pipe(browserSync.reload({stream: true}));
 });
 
-// Отслеживает изменения
+// РћС‚СЃР»РµР¶РёРІР°РµС‚ РёР·РјРµРЅРµРЅРёСЏ
 gulp.task('watch', ['sass', 'js', 'browser-sync'], function() {
-	gulp.watch('app/sass/**/*.sass', ['sass']); // Наблюдение за sass файлами в папке sass
-	gulp.watch(['libs/**/*.js', 'app/js/common.js'], ['js']); // Наблюдение за JS файлами в папке js
-	gulp.watch('app/*.html', browserSync.reload); // Наблюдение за HTML файлами в корне проекта
+	gulp.watch('app/sass/**/*.sass', ['sass']); // РќР°Р±Р»СЋРґРµРЅРёРµ Р·Р° sass С„Р°Р№Р»Р°РјРё РІ РїР°РїРєРµ sass
+	gulp.watch(['libs/**/*.js', 'app/js/common.js'], ['js']); // РќР°Р±Р»СЋРґРµРЅРёРµ Р·Р° JS С„Р°Р№Р»Р°РјРё РІ РїР°РїРєРµ js
+	gulp.watch('app/*.html', browserSync.reload); // РќР°Р±Р»СЋРґРµРЅРёРµ Р·Р° HTML С„Р°Р№Р»Р°РјРё РІ РєРѕСЂРЅРµ РїСЂРѕРµРєС‚Р°
 });
 
 gulp.task('imagemin', function() {
@@ -116,7 +116,7 @@ gulp.task('rsync', function() {
 		root: 'dist/',
 		hostname: 'username@yousite.com',
 		destination: 'yousite/public_html/',
-		// include: ['*.htaccess'], // Скрытые файлы, которые необходимо включить в деплой
+		// include: ['*.htaccess'], // РЎРєСЂС‹С‚С‹Рµ С„Р°Р№Р»С‹, РєРѕС‚РѕСЂС‹Рµ РЅРµРѕР±С…РѕРґРёРјРѕ РІРєР»СЋС‡РёС‚СЊ РІ РґРµРїР»РѕР№
 		recursive: true,
 		archive: true,
 		silent: false,
